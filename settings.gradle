@@ -1,0 +1,3 @@
+rootProject.name = 'ngc-platform'
+
+include 'interaction-api'
