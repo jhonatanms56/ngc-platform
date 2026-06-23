@@ -45,24 +45,5 @@ resource "newrelic_one_dashboard" "interaction_api" {
       }
     }
 
-    # --- Interactions per minute by channel (line chart) ---
-    widget_line {
-      title  = "Interactions per minute by channel"
-      row    = 1
-      column = 5
-      width  = 8
-      height = 3
-
-      nrql_query {
-        account_id = var.nr_account_id
-        query      = <<-NRQL
-          SELECT rate(count(*), 1 minute)
-          FROM InteractionCreated
-          FACET channel
-          SINCE 1 hour ago
-          TIMESERIES
-        NRQL
-      }
-    }
   }
 }
