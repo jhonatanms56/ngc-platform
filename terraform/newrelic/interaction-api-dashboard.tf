@@ -45,5 +45,37 @@ resource "newrelic_one_dashboard" "interaction_api" {
       }
     }
 
+
+
+    # --- InteractionFetched: fetch rate by channel (string facet) ---
+        # Added to surface how often interactions are fetched and which channels drive the most traffic
+        widget_line {
+          title  = "Interaction fetch rate by channel (per minute)"
+          row    = 10
+          column = 1
+          width  = 6
+          height = 3
+
+          nrql_query {
+            account_id = var.nr_account_id
+            query      = "SELECT rate(count(*), 1 minute) FROM InteractionFetched FACET channel SINCE 1 hour ago TIMESERIES"
+          }
+        }
+
+        # --- InteractionFetched: fetch rate by interactionId (string facet) ---
+        # Added to identify which specific interactions are fetched most frequently, helping detect hot-spots
+        widget_line {
+          title  = "Interaction fetch rate by interactionId (per minute)"
+          row    = 10
+          column = 7
+          width  = 6
+          height = 3
+
+          nrql_query {
+            account_id = var.nr_account_id
+            query      = "SELECT rate(count(*), 1 minute) FROM InteractionFetched FACET interactionId SINCE 1 hour ago TIMESERIES"
+          }
+        }
+
   }
 }
