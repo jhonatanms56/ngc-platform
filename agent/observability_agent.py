@@ -127,13 +127,20 @@ Rules:
 account_id variable is: var.nr_account_id
 """
 
-    message = client.messages.create(
-        model="claude-opus-4-5",
-        max_tokens=2048,
-        messages=[{"role": "user", "content": prompt}]
-    )
-
-    return message.content[0].text.strip()
+    for attempt in range(1, 4):
+        try:
+            message = client.messages.create(
+                model="claude-opus-4-5",
+                max_tokens=2048,
+                messages=[{"role": "user", "content": prompt}]
+            )
+            return message.content[0].text.strip()
+        except Exception as e:
+            if attempt == 3:
+                raise
+            print(f"  Claude API error (attempt {attempt}/3): {e} — retrying in 5s...")
+            import time
+            time.sleep(5)
 
 
 # ---------------------------------------------------------------------------
