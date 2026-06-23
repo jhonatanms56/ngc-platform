@@ -64,5 +64,43 @@ resource "newrelic_one_dashboard" "interaction_api" {
         NRQL
       }
     }
+
+
+    # --- InteractionFetched: Total fetches over time (billboard) ---
+        # Added to track volume of interaction fetch operations
+        widget_billboard {
+          title  = "Total Interactions Fetched (1 hour)"
+          row    = 10
+          column = 1
+          width  = 4
+          height = 3
+
+          nrql_query {
+            account_id = var.nr_account_id
+            query      = "SELECT count(*) AS 'fetches' FROM InteractionFetched SINCE 1 hour ago"
+          }
+        }
+
+        # --- InteractionFetched: Fetch rate per minute by channel (line chart) ---
+        # Added to monitor fetch patterns across different channels over time
+        widget_line {
+          title  = "Interaction Fetches per minute by channel"
+          row    = 10
+          column = 5
+          width  = 8
+          height = 3
+
+          nrql_query {
+            account_id = var.nr_account_id
+            query      = <<-NRQL
+              SELECT rate(count(*), 1 minute)
+              FROM InteractionFetched
+              FACET channel
+              SINCE 1 hour ago
+              TIMESERIES
+            NRQL
+          }
+        }
+
   }
 }
